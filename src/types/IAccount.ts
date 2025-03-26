@@ -1,4 +1,4 @@
-import { Author } from "./IAuthor";
+import { IAuthor } from "./IAuthor";
 
 export interface Account {
     userId: number;
@@ -16,5 +16,5 @@ export interface Account {
     createdAt: Date;
     updatedAt: Date;
 
-    user: Author;
+    user: IAuthor;
 }
