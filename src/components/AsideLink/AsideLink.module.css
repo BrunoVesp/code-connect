@@ -1,0 +1,26 @@
+.asideLink {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    color: white;
+    transition: color 0.2s;
+}
+
+.asideLink:visited {
+    color: #888888;
+}
+
+.asideLink svg path {
+    transition: fill 0.2s;
+}
+
+.asideLink:hover {
+    color: #FFF;
+}
+
+.asideLink:hover svg path {
+    fill: #FFF;
+}

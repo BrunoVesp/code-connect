@@ -1,0 +1,97 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int       @id @default(autoincrement())
+  name          String?
+  username      String?   @unique
+  avatar        String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  Post          Post[]
+  Comments      Comment[]
+  Account       Account[]
+  Session       Session[]
+}
+
+model Post {
+  id        Int       @id @default(autoincrement())
+  cover     String
+  title     String
+  slug      String    @unique
+  body      String
+  markdown  String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  authorId  Int
+  author    User      @relation(fields: [authorId], references: [id])
+  comment   Comment[]
+  likes     Int       @default(0)
+}
+
+model Comment {
+  id        Int       @id @default(autoincrement())
+  text      String
+  createdAt DateTime  @default(now())
+  updateAt  DateTime  @updatedAt
+  authorId  Int
+  author    User      @relation(fields: [authorId], references: [id])
+  postId    Int
+  post      Post      @relation(fields: [postId], references: [id])
+  parentId  Int?
+  parent    Comment?  @relation("CommentChildren", fields: [parentId], references: [id])
+  children  Comment[] @relation("CommentChildren")
+}
+
+model Account {
+  userId            Int
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       Int
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
