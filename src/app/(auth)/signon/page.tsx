@@ -12,7 +12,7 @@ import { TextDivider } from "@/components/TextDivider";
 import { Providers } from "@/components/Providers";
 import { createUser } from "@/actions";
 
-export default async function SignOn() {
+export default async function Signon() {
     return (
         <main className={styles.main}>
             <div>
