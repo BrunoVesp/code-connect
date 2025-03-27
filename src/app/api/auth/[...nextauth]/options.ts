@@ -13,8 +13,8 @@ export const options: AuthOptions = {
   },
   providers: [
     GitHubProvider({
-      clientId: process.env.GITHUB_CLIENT_ID as string,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET as string
+      clientId: process.env.GITHUB_CLIENT_ID || "",
+      clientSecret: process.env.GITHUB_CLIENT_SECRET || ""
     }),
     CredentialsProvider({
       credentials: {
@@ -31,11 +31,15 @@ export const options: AuthOptions = {
       },
       async authorize(credentials) {
         try {
+          if (!credentials?.email || !credentials?.password) return null;
+
           const foundUser = await db.user.findFirst({
             where: {
               email: credentials?.email
             }
           });
+
+          if (!foundUser || !foundUser.password) return null;
 
           if (foundUser && credentials?.password) {
             console.log("User encontrado");
@@ -58,11 +62,13 @@ export const options: AuthOptions = {
         } catch (error) {
           console.log("Erro ao autorizar um usuário", error);
         }
-
+        
         return null;
       }
     })
   ],
+  secret: process.env.NEXTAUTH_SECRET,
+
   callbacks: {
     async session({ session, token }) {
       if (session.user && token.sub) {
